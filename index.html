@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi Óptica — Formulario de Cita</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal: #0F6E56;
+    --teal-light: #E1F5EE;
+    --teal-mid: #1D9E75;
+    --teal-dark: #085041;
+    --gold: #BA7517;
+    --gold-light: #FAEEDA;
+    --text: #1a1a1a;
+    --text-muted: #6b6b6b;
+    --border: #e2e8e4;
+    --bg: #fafaf8;
+    --white: #ffffff;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --error: #A32D2D;
+    --error-light: #FCEBEB;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 0 60px 0;
+  }
+
+  /* HEADER */
+  .header {
+    width: 100%;
+    background: var(--teal-dark);
+    color: white;
+    padding: 28px 24px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -20px; left: -30px;
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .logo-icon {
+    width: 52px; height: 52px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 14px;
+    font-size: 26px;
+  }
+  .header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    margin-bottom: 6px;
+  }
+  .header p {
+    font-size: 13px;
+    opacity: 0.75;
+    font-weight: 300;
+  }
+
+  /* PROGRESS */
+  .progress-wrap {
+    width: 100%; max-width: 520px;
+    padding: 20px 24px 0;
+  }
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .progress-label {
+    font-size: 12px;
+    color: var(--teal);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .progress-count {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .progress-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--teal-mid), var(--teal));
+    border-radius: 4px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .steps-dots {
+    display: flex; gap: 6px; margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  .dot {
+    flex: 1; height: 3px; border-radius: 3px;
+    background: var(--border);
+    transition: background 0.3s;
+    min-width: 20px;
+  }
+  .dot.done { background: var(--teal-mid); }
+  .dot.active { background: var(--teal); }
+
+  /* CARD */
+  .card {
+    width: 100%; max-width: 520px;
+    margin: 20px 24px 0;
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 28px 24px;
+    animation: slideIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .step-badge {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: var(--teal-light);
+    color: var(--teal-dark);
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.6px; text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+  .step-badge .dot-badge {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--teal-mid);
+  }
+
+  .card h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px; font-weight: 400;
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  .card .subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  /* FORM ELEMENTS */
+  .field { margin-bottom: 18px; }
+  label.field-label {
+    display: block;
+    font-size: 13px; font-weight: 500;
+    color: var(--text);
+    margin-bottom: 7px;
+  }
+  label.field-label span.req { color: var(--teal-mid); margin-left: 2px; }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="date"],
+  input[type="number"],
+  select, textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--teal-mid);
+    box-shadow: 0 0 0 3px rgba(29,158,117,0.12);
+    background: var(--white);
+  }
+  textarea { resize: none; min-height: 90px; line-height: 1.5; }
+  select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6b6b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; cursor: pointer; }
+
+  /* RADIO / CHECK PILLS */
+  .pill-group {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-top: 2px;
+  }
+  .pill-group.col { flex-direction: column; gap: 8px; }
+  .pill {
+    display: flex; align-items: center; gap: 9px;
+    padding: 10px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 40px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--bg);
+    transition: all 0.18s;
+    user-select: none;
+    line-height: 1.2;
+  }
+  .pill:hover { border-color: var(--teal-mid); background: var(--teal-light); }
+  .pill.selected { border-color: var(--teal); background: var(--teal-light); color: var(--teal-dark); font-weight: 500; }
+  .pill .pill-check {
+    width: 18px; height: 18px;
+    border-radius: 50%; border: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.18s; flex-shrink: 0;
+  }
+  .pill.selected .pill-check {
+    background: var(--teal); border-color: var(--teal);
+  }
+  .pill.selected .pill-check::after {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: white;
+    display: block;
+  }
+  .pill-sq { border-radius: var(--radius-sm); }
+  .pill-sq .pill-check { border-radius: 4px; }
+  .pill-sq.selected .pill-check::after { border-radius: 2px; }
+
+  /* SCALE BUTTONS */
+  .scale-group {
+    display: flex; gap: 6px;
+  }
+  .scale-btn {
+    flex: 1; text-align: center;
+    padding: 10px 4px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 14px; font-weight: 500;
+    cursor: pointer;
+    background: var(--bg);
+    transition: all 0.15s;
+  }
+  .scale-btn:hover { border-color: var(--teal-mid); }
+  .scale-btn.selected { background: var(--teal); border-color: var(--teal); color: white; }
+  .scale-labels {
+    display: flex; justify-content: space-between;
+    font-size: 11px; color: var(--text-muted);
+    margin-top: 5px;
+  }
+
+  /* INFO BOX */
+  .info-box {
+    background: var(--gold-light);
+    border: 1px solid rgba(186,117,23,0.25);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--gold);
+    line-height: 1.5;
+    margin-bottom: 18px;
+  }
+  .info-box strong { color: #633806; }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px; background: var(--border);
+    margin: 20px 0;
+  }
+
+  /* BUTTONS */
+  .btn-wrap {
+    display: flex; gap: 10px; margin-top: 24px;
+  }
+  .btn-back {
+    padding: 13px 20px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 500;
+    cursor: pointer; color: var(--text-muted);
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .btn-back:hover { border-color: var(--text-muted); color: var(--text); }
+  .btn-next {
+    flex: 1;
+    padding: 14px 20px;
+    background: var(--teal);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.2px;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-next:hover { background: var(--teal-dark); transform: translateY(-1px); }
+  .btn-next:active { transform: translateY(0); }
+  .btn-next svg { width: 18px; height: 18px; }
+
+  /* SUCCESS */
+  .success-card {
+    width: 100%; max-width: 520px;
+    margin: 20px 24px 0;
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 40px 28px;
+    text-align: center;
+    animation: slideIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    display: none;
+  }
+  .success-icon {
+    width: 72px; height: 72px;
+    background: var(--teal-light);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+  }
+  .success-icon svg { width: 36px; height: 36px; }
+  .success-card h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px; font-weight: 400;
+    margin-bottom: 10px;
+  }
+  .success-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; max-width: 320px; margin: 0 auto; }
+  .success-summary {
+    margin-top: 24px;
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    padding: 18px;
+    text-align: left;
+    border: 1px solid var(--border);
+  }
+  .summary-row {
+    display: flex; gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row .k { color: var(--text-muted); font-weight: 500; flex-shrink: 0; min-width: 120px; }
+  .summary-row .v { color: var(--text); }
+
+  /* FIELD GROUP */
+  .field-row { display: flex; gap: 12px; }
+  .field-row .field { flex: 1; }
+
+  /* REQUIRED NOTE */
+  .required-note { font-size: 11px; color: var(--text-muted); margin-bottom: 20px; }
+  .required-note span { color: var(--teal-mid); }
+
+  /* HIDDEN */
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo-icon">👁️</div>
+  <h1>Tu Óptica</h1>
+  <p>Formulario previo a la cita — Confidencial y seguro</p>
+</div>
+
+<div class="progress-wrap" id="progressWrap">
+  <div class="progress-header">
+    <span class="progress-label" id="stepLabel">Datos personales</span>
+    <span class="progress-count" id="stepCount">Paso 1 de 6</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:16.6%"></div></div>
+  <div class="steps-dots" id="stepsDots"></div>
+</div>
+
+<!-- ========== STEP 1: Datos personales ========== -->
+<div class="card" id="step1">
+  <div class="step-badge"><div class="dot-badge"></div>Identificación</div>
+  <h2>Datos personales</h2>
+  <p class="subtitle">Para preparar tu ficha antes de la consulta</p>
+  <p class="required-note">Los campos con <span>*</span> son obligatorios</p>
+
+  <div class="field-row">
+    <div class="field">
+      <label class="field-label">Nombre <span class="req">*</span></label>
+      <input type="text" id="nombre" placeholder="Tu nombre">
+    </div>
+    <div class="field">
+      <label class="field-label">Apellidos <span class="req">*</span></label>
+      <input type="text" id="apellidos" placeholder="Tus apellidos">
+    </div>
+  </div>
+
+  <div class="field-row">
+    <div class="field">
+      <label class="field-label">Fecha de nacimiento <span class="req">*</span></label>
+      <input type="date" id="fechaNac">
+    </div>
+    <div class="field">
+      <label class="field-label">Teléfono <span class="req">*</span></label>
+      <input type="tel" id="telefono" placeholder="6XX XXX XXX">
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="field-label">Correo electrónico</label>
+    <input type="email" id="email" placeholder="tu@correo.es">
+  </div>
+
+  <div class="field">
+    <label class="field-label">Sexo</label>
+    <div class="pill-group">
+      <div class="pill" onclick="selectPill(this,'sexo')">Hombre</div>
+      <div class="pill" onclick="selectPill(this,'sexo')">Mujer</div>
+      <div class="pill" onclick="selectPill(this,'sexo')">Prefiero no indicarlo</div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="field-label">¿Es tu primera visita a nuestra óptica?</label>
+    <div class="pill-group">
+      <div class="pill" onclick="selectPill(this,'primera')">Sí, primera vez</div>
+      <div class="pill" onclick="selectPill(this,'primera')">No, ya he venido antes</div>
+    </div>
+  </div>
+
+  <div class="btn-wrap">
+    <button class="btn-next" onclick="nextStep(1)">
+      Continuar
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ========== STEP 2: Motivo de la visita ========== -->
+<div class="card hidden" id="step2">
+  <div class="step-badge"><div class="dot-badge"></div>Motivo</div>
+  <h2>¿Por qué vienes hoy?</h2>
+  <p class="subtitle">Selecciona todo lo que aplique a tu situación</p>
+
+  <div class="field">
+    <label class="field-label">Motivo principal de la visita <span class="req">*</span></label>
+    <div class="pill-group col">
+      <div class="pill pill-sq" onclick="togglePill(this,'motivo')">
+        <div class="pill-check"></div> Revisión rutinaria / control periódico
+      </div>
+      <div class="pill pill-sq" onclick="togglePill(this,'motivo')">
+        <div class="pill-check"></div> Noto que veo peor de lejos
+      </div>
+      <div class="pill pill-sq" onclick="togglePill(this,'motivo')">
+        <div class="pill-check"></div> Noto que veo peor de cerca
+      </div>
+      <div class="pill pill-sq" onclick="togglePill(this,'motivo')">
+        <div class="pill-check"></div> Dolor de cabeza / cansancio visual
+      </div>
+      <div class="pill pill-sq" onclick="togglePill(this,'motivo')">
+        <div class="pill-check"></div> Ojos rojos o irritados
+      </div>
+      <div class="pill pill-sq" onclick="togglePill(this,'motivo')">
+        <div class="pill-check"></div> Renovar gafas o lentillas
+      </div>
+      <div class="pill pill-sq" onclick="togglePill(this,'motivo')">
+        <div class="pill-check"></div> Primera vez con corrección óptica
+      </div>
+      <div class="pill pill-sq" onclick="togglePill(this,'motivo')">
+        <div class="pill-check"></div> Me han derivado desde otro especialista
+      </div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="field-label">¿Desde cuándo notas estos síntomas?</label>
+    <select id="tiempSintomas">
+      <option value="">Selecciona una opción</option>
+      <option>Menos de 1 semana</option>
+      <option>Entre 1 semana y 1 mes</option>
+      <option>Entre 1 y 6 meses</option>
+      <option>Más de 6 meses</option>
+      <option>No aplica (revisión rutinaria)</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label class="field-label">Descríbenos brevemente tu situación (opcional)</label>
+    <textarea id="descripcion" placeholder="Cualquier detalle que quieras que sepamos antes de la consulta…"></textarea>
+  </div>
+
+  <div class="btn-wrap">
+    <button class="btn-back" onclick="prevStep(2)">← Atrás</button>
+    <button class="btn-next" onclick="nextStep(2)">
+      Continuar
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ========== STEP 3: Antecedentes visuales ========== -->
+<div class="card hidden" id="step3">
+  <div class="step-badge"><div class="dot-badge"></div>Historial óptico</div>
+  <h2>Tus antecedentes visuales</h2>
+  <p class="subtitle">Información sobre correcciones y tratamientos anteriores</p>
+
+  <div class="field">
+    <label class="field-label">¿Usas actualmente alguna corrección visual?</label>
+    <div class="pill-group col">
+      <div class="pill pill-sq" onclick="togglePill(this,'correccion')"><div class="pill-check"></div> Gafas de lejos</div>
+      <div class="pill pill-sq" onclick="togglePill(this,'correccion')"><div class="pill-check"></div> Gafas de cerca / lectura</div>
+      <div class="pill pill-sq" onclick="togglePill(this,'correccion')"><div class="pill-check"></div> Gafas progresivas</div>
+      <div class="pill pill-sq" onclick="togglePill(this,'correccion')"><div class="pill-check"></div> Lentes de contacto blandas</div>
+      <div class="pill pill-sq" onclick="togglePill(this,'correccion')"><div class="pill-check"></div> Lentes de contacto rígidas</div>
+      <div class="pill pill-sq" onclick="togglePill(this,'correccion')"><div class="pill-check"></div> No uso ninguna corrección</div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="field-label">¿Cuándo fue tu última revisión visual?</label>
+    <select id="ultimaRevision">
+      <option value="">Selecciona</option>
+      <option>Hace menos de 1 año</option>
+      <option>Entre 1 y 2 años</option>
+      <option>Hace más de 2 años</option>
+      <option>Nunca me han revisado</option>
+      <option>No recuerdo</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label class="field-label">¿Te han operado de la vista alguna vez?</label>
+    <div class="pill-group">
+      <div class="pill" onclick="selectPill(this,'operado')">Sí (LASIK u otra)</div>
+      <div class="pill" onclick="selectPill(this,'operado')">Sí (cataratas)</div>
+      <div class="pill" onclick="selectPill(this,'operado')">Sí (otra cirugía)</div>
+      <div class="pill" onclick="selectPill(this,'operado')">No</div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="field-label">¿Tienes diagnóstico de alguna de estas condiciones?</label>
+    <div class="pill-group col">
+      <div class="pill pill-sq" onclick="togglePill(this,'condicion')"><div class="pill-check"></div> Miopía</div>
+      <div class="pill pill-sq" onclick="togglePill(this,'condicion')"><div class="pill-check"></div> Hipermetropía</div>
+      <div class="pill pill-sq" onclick="togglePill(this,'condicion')"><div class="pill-check"></div> Astigmatismo</div>
+      <div class="pill pill-sq" onclick="togglePill(this,'condicion')"><div class="pill-check"></div> Presbicia (vista cansada)</div>
+      <div class="pill pill-sq" onclick="togglePill(this,'condicion')"><div class="pill-check"></div> Ambliopía (ojo vago)</div>
+      <div class="pill pill-sq" onclick="togglePill(this,'condicion')"><div class="pill-check"></div> Estrabismo</div>
+      <div class="pill pill-sq" onclick="togglePill(this,'condicion')"><div class="pill-check"></div> Glaucoma</div>
+      <div class="pill pill-sq" onclick="togglePill(this,'condicion')"><div class="pill-check"></div> Degeneración macular</div>
+      <div class="pill pill-sq" onclick="togglePill(this,'condicion')"><div class="pill-check"></div> Ninguna de las anteriores</div>
+    </div>
+  </div>
+
+  <div class="btn-wrap">
+    <button class="btn-back" onclick="prevStep(3)">← Atrás</button>
+    <button class="btn-next" onclick="nextStep(3)">
+      Continuar
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ========== STEP 4: Salud general ========== -->
+<div class="card hidden" id="step4">
+  <div class="step-badge"><div class="dot-badge"></div>Salud general</div>
+  <h2>Tu salud en general</h2>
+  <p class="subtitle">Algunas enfermedades sistémicas pueden afectar la visión</p>
+
+  <div class="info-box">
+    <strong>¿Por qué te preguntamos esto?</strong> Enfermedades como la diabetes o la hipertensión pueden tener repercusiones en la salud ocular. Esta información nos ayuda a hacer una valoración más completa.
+  </div>
+
+  <div class="field">
+    <label class="field-label">¿Tienes alguna de estas enfermedades?</label>
+    <div class="pill-group col">
+      <div class="pill pill-sq" onclick="togglePill(this,'enf')"><div class="pill-check"></div> Diabetes</div>
+      <div class="pill pill-sq" onclick="togglePill(this,'enf')"><div class="pill-check"></div> Hipertensión arterial</div>
+      <div class="pill pill-sq" onclick="togglePill(this,'enf')"><div class="pill-check"></div> Enfermedades autoinmunes (artritis, lupus…)</div>
+      <div class="pill pill-sq" onclick="togglePill(this,'enf')"><div class="pill-check"></div> Alergias (en general)</div>
+      <div class="pill pill-sq" onclick="togglePill(this,'enf')"><div class="pill-check"></div> Tiroides</div>
+      <div class="pill pill-sq" onclick="togglePill(this,'enf')"><div class="pill-check"></div> Ninguna</div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="field-label">¿Tomas alguna medicación de forma habitual?</label>
+    <div class="pill-group">
+      <div class="pill" onclick="selectPill(this,'medicacion')">Sí</div>
+      <div class="pill" onclick="selectPill(this,'medicacion')">No</div>
+    </div>
+  </div>
+  <div class="field" id="medicacionDetalle" style="display:none">
+    <label class="field-label">¿Qué medicación tomas?</label>
+    <textarea id="medicacionTexto" placeholder="Indica el nombre del medicamento si lo recuerdas…"></textarea>
+  </div>
+
+  <div class="field">
+    <label class="field-label">Antecedentes familiares (padres, hermanos)</label>
+    <div class="pill-group col">
+      <div class="pill pill-sq" onclick="togglePill(this,'familia')"><div class="pill-check"></div> Glaucoma</div>
+      <div class="pill pill-sq" onclick="togglePill(this,'familia')"><div class="pill-check"></div> Degeneración macular</div>
+      <div class="pill pill-sq" onclick="togglePill(this,'familia')"><div class="pill-check"></div> Miopía elevada</div>
+      <div class="pill pill-sq" onclick="togglePill(this,'familia')"><div class="pill-check"></div> Cataratas tempranas</div>
+      <div class="pill pill-sq" onclick="togglePill(this,'familia')"><div class="pill-check"></div> Diabetes</div>
+      <div class="pill pill-sq" onclick="togglePill(this,'familia')"><div class="pill-check"></div> No conozco / No aplica</div>
+    </div>
+  </div>
+
+  <div class="btn-wrap">
+    <button class="btn-back" onclick="prevStep(4)">← Atrás</button>
+    <button class="btn-next" onclick="nextStep(4)">
+      Continuar
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ========== STEP 5: Hábitos visuales ========== -->
+<div class="card hidden" id="step5">
+  <div class="step-badge"><div class="dot-badge"></div>Hábitos</div>
+  <h2>Hábitos y estilo de vida</h2>
+  <p class="subtitle">Para adaptar mejor la recomendación a tu día a día</p>
+
+  <div class="field">
+    <label class="field-label">¿Cuántas horas al día usas pantallas? (móvil, ordenador, TV)</label>
+    <div class="scale-group" id="pantallas">
+      <div class="scale-btn" onclick="selectScale(this,'pantallas')">0–2h</div>
+      <div class="scale-btn" onclick="selectScale(this,'pantallas')">2–4h</div>
+      <div class="scale-btn" onclick="selectScale(this,'pantallas')">4–6h</div>
+      <div class="scale-btn" onclick="selectScale(this,'pantallas')">6–8h</div>
+      <div class="scale-btn" onclick="selectScale(this,'pantallas')">+8h</div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="field-label">¿Tu trabajo principal es frente a pantalla?</label>
+    <div class="pill-group">
+      <div class="pill" onclick="selectPill(this,'trabajoPantalla')">Sí</div>
+      <div class="pill" onclick="selectPill(this,'trabajoPantalla')">No</div>
+      <div class="pill" onclick="selectPill(this,'trabajoPantalla')">Parcialmente</div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="field-label">¿Notas síntomas de fatiga visual? (ardor, visión borrosa al final del día…)</label>
+    <div class="pill-group">
+      <div class="pill" onclick="selectPill(this,'fatiga')">Sí, con frecuencia</div>
+      <div class="pill" onclick="selectPill(this,'fatiga')">A veces</div>
+      <div class="pill" onclick="selectPill(this,'fatiga')">Raramente</div>
+      <div class="pill" onclick="selectPill(this,'fatiga')">No</div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="field-label">¿Practicas deporte o actividades al aire libre?</label>
+    <div class="pill-group col">
+      <div class="pill pill-sq" onclick="togglePill(this,'deporte')"><div class="pill-check"></div> Deporte de interior (gym, pádel, natación…)</div>
+      <div class="pill pill-sq" onclick="togglePill(this,'deporte')"><div class="pill-check"></div> Deporte de exterior (running, ciclismo, montaña…)</div>
+      <div class="pill pill-sq" onclick="togglePill(this,'deporte')"><div class="pill-check"></div> No practico deporte habitualmente</div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="field-label">¿Usas protección solar para los ojos?</label>
+    <div class="pill-group">
+      <div class="pill" onclick="selectPill(this,'solar')">Siempre</div>
+      <div class="pill" onclick="selectPill(this,'solar')">A veces</div>
+      <div class="pill" onclick="selectPill(this,'solar')">Casi nunca</div>
+    </div>
+  </div>
+
+  <div class="btn-wrap">
+    <button class="btn-back" onclick="prevStep(5)">← Atrás</button>
+    <button class="btn-next" onclick="nextStep(5)">
+      Continuar
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ========== STEP 6: Confirmación ========== -->
+<div class="card hidden" id="step6">
+  <div class="step-badge"><div class="dot-badge"></div>Confirmación</div>
+  <h2>Casi hemos terminado</h2>
+  <p class="subtitle">Añade cualquier comentario final y confirma el envío</p>
+
+  <div class="field">
+    <label class="field-label">¿Hay algo más que quieras que sepamos antes de tu visita?</label>
+    <textarea id="comentarios" placeholder="Cualquier detalle adicional, pregunta o preocupación que tengas…" style="min-height: 110px;"></textarea>
+  </div>
+
+  <div class="field">
+    <label class="field-label">¿Cómo prefieres que te contactemos si necesitamos algo?</label>
+    <div class="pill-group">
+      <div class="pill" onclick="selectPill(this,'contactoPref')">WhatsApp</div>
+      <div class="pill" onclick="selectPill(this,'contactoPref')">Llamada</div>
+      <div class="pill" onclick="selectPill(this,'contactoPref')">Email</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="info-box">
+    <strong>Privacidad:</strong> La información que nos facilitas es confidencial y se usará exclusivamente para preparar tu consulta. No se comparte con terceros.
+  </div>
+
+  <div class="field">
+    <div class="pill pill-sq" onclick="togglePill(this,'consentimiento')" id="consentPill">
+      <div class="pill-check"></div>
+      <span style="font-size:13px; line-height:1.4;">Acepto que la óptica trate mis datos para gestionar mi cita y mi historial visual</span>
+    </div>
+  </div>
+
+  <div class="btn-wrap">
+    <button class="btn-back" onclick="prevStep(6)">← Atrás</button>
+    <button class="btn-next" onclick="submitForm()" style="background: #085041;">
+      Enviar formulario
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ========== SUCCESS ========== -->
+<div class="success-card" id="successCard">
+  <div class="success-icon">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#0F6E56" stroke-width="2.5" stroke-linecap="round">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+      <polyline points="22 4 12 14.01 9 11.01"/>
+    </svg>
+  </div>
+  <h2>¡Muchas gracias!</h2>
+  <p>Hemos recibido tu formulario. Tu optometrista revisará toda la información antes de tu cita para ofrecerte una atención más completa y personalizada.</p>
+
+  <div class="success-summary" id="successSummary"></div>
+</div>
+
+<script>
+  const STEPS = 6;
+  const stepNames = ['Datos personales','Motivo de visita','Historial óptico','Salud general','Hábitos visuales','Confirmación'];
+  let currentStep = 1;
+
+  // Selections store
+  const selections = {};
+
+  function buildDots() {
+    const el = document.getElementById('stepsDots');
+    el.innerHTML = '';
+    for (let i = 1; i <= STEPS; i++) {
+      const d = document.createElement('div');
+      d.className = 'dot' + (i < currentStep ? ' done' : i === currentStep ? ' active' : '');
+      el.appendChild(d);
+    }
+  }
+
+  function updateProgress() {
+    document.getElementById('progressFill').style.width = ((currentStep / STEPS) * 100) + '%';
+    document.getElementById('stepLabel').textContent = stepNames[currentStep - 1];
+    document.getElementById('stepCount').textContent = 'Paso ' + currentStep + ' de ' + STEPS;
+    buildDots();
+  }
+
+  function showStep(n) {
+    for (let i = 1; i <= STEPS; i++) {
+      document.getElementById('step' + i).classList.add('hidden');
+    }
+    document.getElementById('step' + n).classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function nextStep(from) {
+    if (from === 1) {
+      if (!document.getElementById('nombre').value.trim() || !document.getElementById('apellidos').value.trim()) {
+        alert('Por favor, indica tu nombre y apellidos.');
+        return;
+      }
+    }
+    currentStep = from + 1;
+    updateProgress();
+    showStep(currentStep);
+  }
+
+  function prevStep(from) {
+    currentStep = from - 1;
+    updateProgress();
+    showStep(currentStep);
+  }
+
+  // Single-select pills
+  function selectPill(el, group) {
+    document.querySelectorAll('[onclick*="selectPill"][onclick*="' + group + '"]').forEach(p => p.classList.remove('selected'));
+    el.classList.add('selected');
+    selections[group] = el.textContent.trim();
+    // Show/hide medicacion detail
+    if (group === 'medicacion') {
+      document.getElementById('medicacionDetalle').style.display = el.textContent.includes('Sí') ? 'block' : 'none';
+    }
+  }
+
+  // Multi-select pills (checkbox style)
+  function togglePill(el, group) {
+    el.classList.toggle('selected');
+    if (!selections[group]) selections[group] = [];
+    const val = el.textContent.trim();
+    const idx = selections[group].indexOf(val);
+    if (idx > -1) selections[group].splice(idx, 1);
+    else selections[group].push(val);
+  }
+
+  // Scale buttons
+  function selectScale(el, group) {
+    el.closest('.scale-group').querySelectorAll('.scale-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+    selections[group] = el.textContent.trim();
+  }
+
+  async function submitForm() {
+    const consented = document.getElementById('consentPill').classList.contains('selected');
+    if (!consented) {
+      alert('Por favor, acepta el consentimiento de tratamiento de datos.');
+      return;
+    }
+
+    const nombre = document.getElementById('nombre').value.trim();
+    const apellidos = document.getElementById('apellidos').value.trim();
+    const tel = document.getElementById('telefono').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const fechaNac = document.getElementById('fechaNac').value;
+    const descripcion = document.getElementById('descripcion').value.trim();
+    const medicacionTexto = document.getElementById('medicacionTexto').value.trim();
+    const comentarios = document.getElementById('comentarios').value.trim();
+
+    const getArr = (key) => selections[key] ? (Array.isArray(selections[key]) ? selections[key].join(', ') : selections[key]) : '—';
+
+    // ⚠️ SUSTITUYE "TU_ID_FORMSPREE" por tu ID real de Formspree
+    const FORMSPREE_URL = 'https://formspree.io/f/xjgljwwa';
+
+    const payload = {
+      '👤 Nombre completo': nombre + ' ' + apellidos,
+      '📞 Teléfono': tel || '—',
+      '✉️ Email': email || '—',
+      '🎂 Fecha de nacimiento': fechaNac || '—',
+      '🔁 Primera visita': getArr('primera'),
+      '👁️ Motivo de la visita': getArr('motivo'),
+      '⏱️ Tiempo con síntomas': document.getElementById('tiempSintomas').value || '—',
+      '📝 Descripción del paciente': descripcion || '—',
+      '👓 Corrección actual': getArr('correccion'),
+      '📅 Última revisión': document.getElementById('ultimaRevision').value || '—',
+      '🔪 Operado de la vista': getArr('operado'),
+      '🏥 Condiciones diagnosticadas': getArr('condicion'),
+      '💊 Enfermedades sistémicas': getArr('enf'),
+      '💉 Toma medicación': getArr('medicacion'),
+      '💊 Medicación detallada': medicacionTexto || '—',
+      '👨‍👩‍👧 Antecedentes familiares': getArr('familia'),
+      '🖥️ Horas de pantalla al día': getArr('pantallas'),
+      '💼 Trabaja frente a pantalla': getArr('trabajoPantalla'),
+      '😓 Fatiga visual': getArr('fatiga'),
+      '🏃 Deporte / actividad': getArr('deporte'),
+      '🕶️ Protección solar': getArr('solar'),
+      '📬 Preferencia de contacto': getArr('contactoPref'),
+      '💬 Comentarios adicionales': comentarios || '—',
+    };
+
+    const btnEnviar = document.querySelector('#step6 .btn-next');
+    btnEnviar.textContent = 'Enviando…';
+    btnEnviar.disabled = true;
+
+    try {
+      const res = await fetch(FORMSPREE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) throw new Error('Error al enviar');
+
+      // Show summary to patient
+      const rows = [
+        ['Paciente', nombre + ' ' + apellidos],
+        ['Teléfono', tel || '—'],
+        ['Primera visita', getArr('primera')],
+        ['Motivo', getArr('motivo')],
+        ['Corrección actual', getArr('correccion')],
+        ['Horas de pantalla', getArr('pantallas')],
+        ['Fatiga visual', getArr('fatiga')],
+      ];
+      let html = '';
+      rows.forEach(([k, v]) => {
+        html += '<div class="summary-row"><span class="k">' + k + '</span><span class="v">' + v + '</span></div>';
+      });
+      document.getElementById('successSummary').innerHTML = html;
+
+      for (let i = 1; i <= STEPS; i++) document.getElementById('step' + i).classList.add('hidden');
+      document.getElementById('progressWrap').style.display = 'none';
+      document.getElementById('successCard').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    } catch(e) {
+      alert('Ha habido un problema al enviar. Por favor, inténtalo de nuevo o llámanos.');
+      btnEnviar.textContent = 'Enviar formulario';
+      btnEnviar.disabled = false;
+    }
+  }
+
+  // Init
+  updateProgress();
+
+  // Medicacion toggle
+  document.querySelectorAll('[onclick*="selectPill"][onclick*="medicacion"]').forEach(el => {
+    el.addEventListener('click', () => {
+      document.getElementById('medicacionDetalle').style.display =
+        el.textContent.includes('Sí') && el.classList.contains('selected') ? 'block' : 'none';
+    });
+  });
+</script>
+</body>
+</html>
