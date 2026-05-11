@@ -405,46 +405,18 @@
   <div class="step-badge"><div class="dot-badge"></div>Identificación</div>
   <h2>Datos personales</h2>
   <p class="subtitle">Para preparar tu ficha antes de la consulta</p>
-  <p class="required-note">Los campos con <span>*</span> son obligatorios</p>
-
-  <div class="field-row">
-    <div class="field">
-      <label class="field-label">Nombre <span class="req">*</span></label>
-      <input type="text" id="nombre" placeholder="Tu nombre">
-    </div>
-    <div class="field">
-      <label class="field-label">Apellidos <span class="req">*</span></label>
-      <input type="text" id="apellidos" placeholder="Tus apellidos">
-    </div>
-  </div>
-
-  <div class="field-row">
-    <div class="field">
-      <label class="field-label">Fecha de nacimiento <span class="req">*</span></label>
-      <input type="date" id="fechaNac">
-    </div>
-    <div class="field">
-      <label class="field-label">Teléfono <span class="req">*</span></label>
-      <input type="tel" id="telefono" placeholder="6XX XXX XXX">
-    </div>
+  <div class="field">
+    <label class="field-label">Nombre <span class="req">*</span></label>
+    <input type="text" id="nombre" placeholder="Tu nombre completo">
   </div>
 
   <div class="field">
-    <label class="field-label">Correo electrónico</label>
-    <input type="email" id="email" placeholder="tu@correo.es">
+    <label class="field-label">Edad <span class="req">*</span></label>
+    <input type="number" id="edad" placeholder="Ej: 34" min="1" max="120" style="max-width:140px;">
   </div>
 
   <div class="field">
-    <label class="field-label">Sexo</label>
-    <div class="pill-group">
-      <div class="pill" onclick="selectPill(this,'sexo')">Hombre</div>
-      <div class="pill" onclick="selectPill(this,'sexo')">Mujer</div>
-      <div class="pill" onclick="selectPill(this,'sexo')">Prefiero no indicarlo</div>
-    </div>
-  </div>
-
-  <div class="field">
-    <label class="field-label">¿Es tu primera visita a nuestra óptica?</label>
+    <label class="field-label">¿Es tu primera visita a Natural Optics Vivavisión?</label>
     <div class="pill-group">
       <div class="pill" onclick="selectPill(this,'primera')">Sí, primera vez</div>
       <div class="pill" onclick="selectPill(this,'primera')">No, ya he venido antes</div>
@@ -794,8 +766,8 @@
 
   function nextStep(from) {
     if (from === 1) {
-      if (!document.getElementById('nombre').value.trim() || !document.getElementById('apellidos').value.trim()) {
-        alert('Por favor, indica tu nombre y apellidos.');
+      if (!document.getElementById('nombre').value.trim() || !document.getElementById('edad').value.trim()) {
+        alert('Por favor, indica tu nombre y edad.');
         return;
       }
     }
@@ -846,10 +818,7 @@
     }
 
     const nombre = document.getElementById('nombre').value.trim();
-    const apellidos = document.getElementById('apellidos').value.trim();
-    const tel = document.getElementById('telefono').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const fechaNac = document.getElementById('fechaNac').value;
+    const edad = document.getElementById('edad').value.trim();
     const descripcion = document.getElementById('descripcion').value.trim();
     const medicacionTexto = document.getElementById('medicacionTexto').value.trim();
     const comentarios = document.getElementById('comentarios').value.trim();
@@ -860,10 +829,8 @@
     const FORMSPREE_URL = 'https://formspree.io/f/xjgljwwa';
 
     const payload = {
-      '👤 Nombre completo': nombre + ' ' + apellidos,
-      '📞 Teléfono': tel || '—',
-      '✉️ Email': email || '—',
-      '🎂 Fecha de nacimiento': fechaNac || '—',
+      '👤 Nombre': nombre || '—',
+      '🎂 Edad': edad ? edad + ' años' : '—',
       '🔁 Primera visita': getArr('primera'),
       '👁️ Motivo de la visita': getArr('motivo'),
       '⏱️ Tiempo con síntomas': document.getElementById('tiempSintomas').value || '—',
@@ -900,8 +867,8 @@
 
       // Show summary to patient
       const rows = [
-        ['Paciente', nombre + ' ' + apellidos],
-        ['Teléfono', tel || '—'],
+        ['Paciente', nombre || '—'],
+        ['Edad', edad ? edad + ' años' : '—'],
         ['Primera visita', getArr('primera')],
         ['Motivo', getArr('motivo')],
         ['Corrección actual', getArr('correccion')],
